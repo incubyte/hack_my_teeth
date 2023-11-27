@@ -1,13 +1,10 @@
 import flask
 from flask_cors import CORS, cross_origin
 import subprocess
-import shlex
-
 app=flask.Flask(__name__,template_folder="/code")
 cors = CORS(app)
 dict_user= {"1":{"name":"Ardyanto Songoku","phone":"0912221121","salt":"khct9ok4"},"2":{"name":"Tin Tran","phone":"093332221","salt":"9bqtepv0"}}
 count=2
-
 @app.route("/",methods=["GET"])
 def index():
     text = open('/code/front.txt', 'r+')
@@ -20,7 +17,7 @@ def index():
 @app.route("/simpleApi",methods=["POST"])
 def postSimpleApi():
     content = flask.request.json
-    text = subprocess.getoutput(['echo', 'user', shlex.escape(content['name']), 'created!'])
+    text = subprocess.getoutput(['echo', 'user', content['name'], 'created!'])
     e = int(max(dict_user))
     dict_user[str(e+1)] = flask.request.json
     return flask.make_response(text)
@@ -32,6 +29,8 @@ def getSimpleApi(userid):
         phone=dict_user[userid]["phone"]
     )
 
+
+
 @app.route("/simpleApi",methods=["GET"])
 def generatePage():
     return flask.render_template('simpleApi.html')
@@ -40,7 +39,6 @@ def bad_request(message):
     response = flask.jsonify({'message': message})
     response.status_code = 400
     return response
-
 @app.route("/authenApi/<userid>",methods=["GET"])
 @cross_origin(origins="http://app.hackteeth.com",allow_headers=['Content-Type'],supports_credentials=True)
 def getAuthenApi(userid):
@@ -53,7 +51,6 @@ def getAuthenApi(userid):
         )
     else:
         return bad_request('Not authenticated')
-
 @app.route("/vulauthenApi/<userid>",methods=["GET"])
 @cross_origin(allow_headers=['Content-Type'],supports_credentials=True)
 def getVulAuthenApi(userid):
@@ -66,6 +63,5 @@ def getVulAuthenApi(userid):
         )
     else:
         return bad_request('Not authenticated')
-
 if __name__ == "__main__":
     app.run( host='0.0.0.0', port=5000, debug = True)

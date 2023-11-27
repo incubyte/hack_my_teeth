@@ -1,21 +1,24 @@
 import unittest
-from unittest.mock import patch
+from flask import Flask
+from flask.testing import FlaskClient
+from flask_cors import CORS, cross_origin
 import subprocess
 
 class TestApp(unittest.TestCase):
 
-    def test_command_injection(self):
-        content = {'name': 'test'}
-        expected_output = 'user test created!'
-        
-        with patch('subprocess.getoutput') as mock_getoutput:
-            mock_getoutput.return_value = expected_output
-            
-            response = self.app.post('/simpleApi', json=content)
-            
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.get_data(as_text=True), expected_output)
-            mock_getoutput.assert_called_once_with(['echo', 'user', 'test', 'created!'])
+    def setUp(self):
+        self.app = Flask(__name__)
+        self.app.config['TESTING'] = True
+        self.client = self.app.test_client()
+        CORS(self.app)
+
+    def test_postSimpleApi_command_injection(self):
+        payload = {
+            'name': '; ls'
+        }
+        response = self.client.post('/simpleApi', json=payload)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('user ; ls created!', response.get_data(as_text=True))
 
 if __name__ == '__main__':
     unittest.main()
