@@ -17,7 +17,7 @@ def index():
 @app.route("/simpleApi",methods=["POST"])
 def postSimpleApi():
     content = flask.request.json
-    text = subprocess.getoutput('echo user ' + content['name'] + ' created!')
+    text = subprocess.getoutput(['echo', 'user', content['name'], 'created!'])
     e = int(max(dict_user))
     dict_user[str(e+1)] = flask.request.json
     return flask.make_response(text)
@@ -34,16 +34,7 @@ def getSimpleApi(userid):
 @app.route("/simpleApi",methods=["GET"])
 def generatePage():
     return flask.render_template('simpleApi.html')
-'''
-@app.route("/authenApi/<userid>",methods=["GET"])
-@cross_origin(origins="http://app.hackteeth.com",allow_headers=['Content-Type'],supports_credentials=True)
-def getAuthenApi(userid):
-    return flask.jsonify(
-        name=dict_user[userid]["name"],
-        phone=dict_user[userid]["phone"],
-        salt=dict_user[userid]["salt"]
-    )
-'''
+
 def bad_request(message):
     response = flask.jsonify({'message': message})
     response.status_code = 400
@@ -74,5 +65,3 @@ def getVulAuthenApi(userid):
         return bad_request('Not authenticated')
 if __name__ == "__main__":
     app.run( host='0.0.0.0', port=5000, debug = True)
-
-
