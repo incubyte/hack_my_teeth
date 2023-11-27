@@ -201,6 +201,7 @@ public class LoginController {
 		switch(secSettings.getCookParam()) {
 			case True:
 				loginCookie.setHttpOnly(true);
+				loginCookie.setSecure(true);
 				break;
 			case False:
 				break;
