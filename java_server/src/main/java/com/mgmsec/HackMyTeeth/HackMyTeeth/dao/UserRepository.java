@@ -53,7 +53,9 @@ public class UserRepository {
     public List<User> searchDentist(String key) {
         try {
         	if(!key.equals("")) {
-        		List<User> result = jdbcTemplate.query("select * from user  where role = 1 AND (firstName LIKE '%"+key+"%' OR lastName LIKE '%"+key+"%')", (rs, rowNum) -> new User(rs.getLong("userID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("email"), rs.getString("username"), rs.getString("password"), rs.getString("role"),rs.getString("salt")));
+        		String sql = "select * from user  where role = 1 AND (firstName LIKE ? OR lastName LIKE ?)";
+        		Object[] params = new Object[] {"%"+key+"%", "%"+key+"%"};
+        		List<User> result = jdbcTemplate.query(sql, params, (rs, rowNum) -> new User(rs.getLong("userID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("email"), rs.getString("username"), rs.getString("password"), rs.getString("role"),rs.getString("salt")));
         		return result;
         	}else {
                 List<User> result = jdbcTemplate.query("select * from user  where role = 1", (rs, rowNum) -> new User(rs.getLong("userID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("email"), rs.getString("username"), rs.getString("password"), rs.getString("role"),rs.getString("salt")));	
@@ -130,8 +132,9 @@ public class UserRepository {
   					   (rs, rowNum) -> new User(rs.getLong("userID"),rs.getString("firstName"),rs.getString("lastName"),rs.getString("email"),rs.getString("username"),rs.getString("password"),rs.getString("role"),rs.getString("salt"))
   					 ,username,password);}
     		else {
-    		  	result = jdbcTemplate.query( "SELECT * FROM user WHERE username='"+username+"' and password='"+password+"'", 
- 					   (rs, rowNum) -> new User(rs.getLong("userID"),rs.getString("firstName"),rs.getString("lastName"),rs.getString("email"),rs.getString("username"),rs.getString("password"),rs.getString("role"),rs.getString("salt"))
+    		  	String sql = "SELECT * FROM user WHERE username=? and password=?";
+    		  	Object[] params = new Object[] {username, password};
+    		  	result = jdbcTemplate.query(sql, params, (rs, rowNum) -> new User(rs.getLong("userID"),rs.getString("firstName"),rs.getString("lastName"),rs.getString("email"),rs.getString("username"),rs.getString("password"),rs.getString("role"),rs.getString("salt"))
  					 );}
     	
 	    	return result;
