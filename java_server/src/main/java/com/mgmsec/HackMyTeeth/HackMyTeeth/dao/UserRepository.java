@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,8 +99,8 @@ public class UserRepository {
             result = jdbcTemplate.query(asql, (rs, rowNum) -> new User(rs.getLong("userID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("email"), rs.getString("username"), rs.getString("password"), rs.getString("role"), rs.getString("salt")), param);
 
         } else {
-            String sql = "select * from user where userID =" + id + " and role = 1";
-            result = jdbcTemplate.query(sql, (rs, rowNum) -> new User(rs.getLong("userID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("email"), rs.getString("username"), rs.getString("password"), rs.getString("role"),rs.getString("salt")));
+            String sql = "select * from user where userID = ? and role = 1";
+            result = jdbcTemplate.query(sql, (rs, rowNum) -> new User(rs.getLong("userID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("email"), rs.getString("username"), rs.getString("password"), rs.getString("role"),rs.getString("salt")), id);
         }
         if (result.size() <= 0)
             return null;
@@ -130,9 +131,9 @@ public class UserRepository {
   					   (rs, rowNum) -> new User(rs.getLong("userID"),rs.getString("firstName"),rs.getString("lastName"),rs.getString("email"),rs.getString("username"),rs.getString("password"),rs.getString("role"),rs.getString("salt"))
   					 ,username,password);}
     		else {
-    		  	result = jdbcTemplate.query( "SELECT * FROM user WHERE username='"+username+"' and password='"+password+"'", 
+    		  	result = jdbcTemplate.query( "SELECT * FROM user WHERE username=? and password=?", 
  					   (rs, rowNum) -> new User(rs.getLong("userID"),rs.getString("firstName"),rs.getString("lastName"),rs.getString("email"),rs.getString("username"),rs.getString("password"),rs.getString("role"),rs.getString("salt"))
- 					 );}
+ 					 ,username,password);}
     	
 	    	return result;
     	}catch(Exception e) {
