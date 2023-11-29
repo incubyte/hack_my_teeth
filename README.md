@@ -1,5 +1,3 @@
-# Hack My Teeth - A deliberately vulnerable java/python application
-
 ### __DO NOT RUN THIS ON ANY PUBLICLY AVAILABLE SERVER__
 
 
