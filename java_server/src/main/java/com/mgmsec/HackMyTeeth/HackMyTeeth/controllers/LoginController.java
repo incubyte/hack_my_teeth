@@ -39,24 +39,24 @@ public class LoginController {
 	@Autowired
 	CapchaService capchaService;
 
-	@RequestMapping("/login")
-	public ModelAndView firstPage(Model model, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
-		Cookie loginCookie = sessService.checkLoginCookie(request);
-		if (loginCookie != null) {
-			Session session = sessService.findBySession(loginCookie.getValue());
-			if (session != null) return new ModelAndView("redirect:/home");
-		}
-		switch (secSettings.getPwBruteForce()){
-			case Captcha:
-					model.addAttribute("isCaptchaEnabled",true);
-					break;
-				default:
-					break;
-		}
-		modelAndView.setViewName("login");
-		return modelAndView;
-	}
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+public ModelAndView firstPage(Model model, HttpServletRequest request) {
+    ModelAndView modelAndView = new ModelAndView();
+    Cookie loginCookie = sessService.checkLoginCookie(request);
+    if (loginCookie != null) {
+        Session session = sessService.findBySession(loginCookie.getValue());
+        if (session != null) return new ModelAndView("redirect:/home");
+    }
+    switch (secSettings.getPwBruteForce()){
+        case Captcha:
+                model.addAttribute("isCaptchaEnabled",true);
+                break;
+            default:
+                break;
+    }
+    modelAndView.setViewName("login");
+    return modelAndView;
+}
 	@RequestMapping("/")
 	public ModelAndView slash() {
 		return new ModelAndView("redirect:/login");
